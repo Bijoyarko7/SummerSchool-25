@@ -1,0 +1,274 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>PS2_BasakCuoco</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2025-06-15">
+<meta name="DC.source" content="PS2_BasakCuoco.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="comment">% Basak-Cuoco Model with Heterogeneous Discount Rates</span>
+phi = 10;
+a_e = 0.11;
+sigma = 0.10;
+delta = 0.035;
+eta = linspace(0.001, 0.999, 1000);
+
+<span class="comment">% Parameter sets</span>
+param_sets = [0.06 0.04;  <span class="comment">% [rho_e, rho_h] = [6%, 4%]</span>
+              0.05 0.02]; <span class="comment">% [5%, 2%]</span>
+
+colors = {<span class="string">'b-'</span>, <span class="string">'r-'</span>};  <span class="comment">% blue for 6%/4%, red for 5%/2%</span>
+figure(<span class="string">'Position'</span>, [100 100 1000 1000]);
+
+<span class="comment">% Process each parameter set</span>
+<span class="keyword">for</span> i = 1:2
+    rho_e = param_sets(i,1);
+    rho_h = param_sets(i,2);
+
+    <span class="comment">% Compute equilibrium values</span>
+    rho_hat = rho_e .* eta + rho_h .* (1 - eta);
+    A = phi * (rho_e - rho_h) ./ (1 + phi .* rho_hat);
+    <span class="comment">% q(eta)</span>
+    q = (1 + phi * a_e) ./ (1 + phi .* rho_hat);
+
+    <span class="comment">% iota(eta) - needed for calculations</span>
+    iota = (a_e - rho_hat) ./ (1 + phi .* rho_hat);
+
+    <span class="comment">% sigma_q(eta)</span>
+    sigma_q = -(1 - eta) .* ((phi * (rho_e - rho_h)) ./ (1 + phi*rho_e)) .* sigma;
+
+    <span class="comment">% eta*sigma_eta</span>
+    eta_sigma_eta = (1 - eta) .* (1 + phi .* rho_hat) ./ (1 + phi*rho_e) .* sigma;
+
+    <span class="comment">% eta*mu_eta</span>
+    drift_term = -(rho_e - rho_h) .* eta .* (1-eta);
+    vol_term = ((1 - eta).^2 ./ eta) .* ((1 + phi .* rho_hat) ./(1 + phi * rho_e)).^2 * sigma^2;
+    eta_mu_eta = drift_term + vol_term;
+
+    <span class="comment">% r(eta) - risk-free rate</span>
+    r = rho_hat + a_e - iota + A .* eta_mu_eta + A.^2 .* (eta_sigma_eta).^2 + sigma .* sigma_q - (sigma + sigma_q).^2 ./ eta;
+
+    subplot(3,2,1), plot(eta, q, colors{i}, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+    subplot(3,2,2), plot(eta, sigma_q, colors{i}, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+    subplot(3,2,3), plot(eta, eta_mu_eta, colors{i}, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+    subplot(3,2,4), plot(eta, eta_sigma_eta, colors{i}, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+    subplot(3,2,[5,6]), plot(eta, r, colors{i}, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+<span class="keyword">end</span>
+
+<span class="comment">% Add equal discount rate case (rho_e = rho_h = 6%)</span>
+rho_eq = 0.06;
+q_eq = (1 + phi * a_e) / (1 + phi * rho_eq) * ones(size(eta));
+sigma_q_eq = zeros(size(eta));
+eta_sigma_eta_eq = (1 - eta) * sigma;
+eta_mu_eta_eq = ((1 - eta).^2 ./ eta) .* sigma^2;
+iota_eq = (a_e - rho_eq) / (1 + phi * rho_eq);
+r_eq = rho_eq + a_e - iota_eq - sigma^2 ./ eta;
+
+<span class="comment">% Plot equal case with dashed blue line</span>
+subplot(3,2,1), plot(eta, q_eq, <span class="string">'b--'</span>, <span class="string">'LineWidth'</span>, 2);
+subplot(3,2,2), plot(eta, sigma_q_eq, <span class="string">'b--'</span>, <span class="string">'LineWidth'</span>, 2);
+subplot(3,2,3), plot(eta, eta_mu_eta_eq, <span class="string">'b--'</span>, <span class="string">'LineWidth'</span>, 2);
+subplot(3,2,4), plot(eta, eta_sigma_eta_eq, <span class="string">'b--'</span>, <span class="string">'LineWidth'</span>, 2);
+subplot(3,2,[5,6]), plot(eta, r_eq, <span class="string">'b--'</span>, <span class="string">'LineWidth'</span>, 2);
+
+<span class="comment">% Format plots</span>
+subplot(3,2,1)
+xlabel(<span class="string">'\eta'</span>), ylabel(<span class="string">'q(\eta)'</span>)
+legend(<span class="string">'\rho^e &gt; \rho^h (6%/4%)'</span>, <span class="string">'\rho^e &gt; \rho^h (5%/2%)'</span>, <span class="string">'\rho^e = \rho^h'</span>, <span class="string">'Location'</span>, <span class="string">'northeast'</span>)
+grid <span class="string">on</span>, ylim([1.25 2])
+
+subplot(3,2,2)
+xlabel(<span class="string">'\eta'</span>), ylabel(<span class="string">'\sigma^q(\eta)'</span>)
+legend(<span class="string">'\rho^e &gt; \rho^h (6%/4%)'</span>, <span class="string">'\rho^e &gt; \rho^h (5%/2%)'</span>, <span class="string">'\rho^e = \rho^h'</span>, <span class="string">'Location'</span>, <span class="string">'northeast'</span>)
+grid <span class="string">on</span>, ylim([-0.04 0.02])
+
+subplot(3,2,3)
+xlabel(<span class="string">'\eta'</span>), ylabel(<span class="string">'\eta\mu^\eta(\eta)'</span>)
+legend(<span class="string">'\rho^e &gt; \rho^h (6%/4%)'</span>, <span class="string">'\rho^e &gt; \rho^h (5%/2%)'</span>, <span class="string">'\rho^e = \rho^h'</span>, <span class="string">'Location'</span>, <span class="string">'northeast'</span>)
+grid <span class="string">on</span>, ylim([-0.05 1])
+
+subplot(3,2,4)
+xlabel(<span class="string">'\eta'</span>), ylabel(<span class="string">'\eta\sigma^\eta(\eta)'</span>)
+legend(<span class="string">'\rho^e &gt; \rho^h (6%/4%)'</span>, <span class="string">'\rho^e &gt; \rho^h (5%/2%)'</span>, <span class="string">'\rho^e = \rho^h'</span>, <span class="string">'Location'</span>, <span class="string">'northeast'</span>)
+grid <span class="string">on</span>, ylim([0 0.1])
+
+subplot(3,2,[5,6])
+xlabel(<span class="string">'\eta'</span>), ylabel(<span class="string">'r(\eta)'</span>)
+legend(<span class="string">'\rho^e &gt; \rho^h (6%/4%)'</span>, <span class="string">'\rho^e &gt; \rho^h (5%/2%)'</span>, <span class="string">'\rho^e = \rho^h'</span>, <span class="string">'Location'</span>, <span class="string">'northeast'</span>)
+grid <span class="string">on</span>, ylim([-1 0.1])
+xlim([0 0.5])
+</pre>
+<img vspace="5" hspace="5" src="PS2_BasakCuoco_01.png" alt=""> <p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+% Basak-Cuoco Model with Heterogeneous Discount Rates
+phi = 10;
+a_e = 0.11;
+sigma = 0.10;
+delta = 0.035;
+eta = linspace(0.001, 0.999, 1000);
+
+% Parameter sets
+param_sets = [0.06 0.04;  % [rho_e, rho_h] = [6%, 4%]
+              0.05 0.02]; % [5%, 2%]
+
+colors = {'b-', 'r-'};  % blue for 6%/4%, red for 5%/2%
+figure('Position', [100 100 1000 1000]);
+
+% Process each parameter set
+for i = 1:2
+    rho_e = param_sets(i,1);
+    rho_h = param_sets(i,2);
+    
+    % Compute equilibrium values
+    rho_hat = rho_e .* eta + rho_h .* (1 - eta);
+    A = phi * (rho_e - rho_h) ./ (1 + phi .* rho_hat);
+    % q(eta)
+    q = (1 + phi * a_e) ./ (1 + phi .* rho_hat);
+    
+    % iota(eta) - needed for calculations
+    iota = (a_e - rho_hat) ./ (1 + phi .* rho_hat);
+    
+    % sigma_q(eta)
+    sigma_q = -(1 - eta) .* ((phi * (rho_e - rho_h)) ./ (1 + phi*rho_e)) .* sigma;
+    
+    % eta*sigma_eta
+    eta_sigma_eta = (1 - eta) .* (1 + phi .* rho_hat) ./ (1 + phi*rho_e) .* sigma;
+    
+    % eta*mu_eta
+    drift_term = -(rho_e - rho_h) .* eta .* (1-eta);
+    vol_term = ((1 - eta).^2 ./ eta) .* ((1 + phi .* rho_hat) ./(1 + phi * rho_e)).^2 * sigma^2;
+    eta_mu_eta = drift_term + vol_term;
+    
+    % r(eta) - risk-free rate
+    r = rho_hat + a_e - iota + A .* eta_mu_eta + A.^2 .* (eta_sigma_eta).^2 + sigma .* sigma_q - (sigma + sigma_q).^2 ./ eta;
+    
+    subplot(3,2,1), plot(eta, q, colors{i}, 'LineWidth', 2); hold on;
+    subplot(3,2,2), plot(eta, sigma_q, colors{i}, 'LineWidth', 2); hold on;
+    subplot(3,2,3), plot(eta, eta_mu_eta, colors{i}, 'LineWidth', 2); hold on;
+    subplot(3,2,4), plot(eta, eta_sigma_eta, colors{i}, 'LineWidth', 2); hold on;
+    subplot(3,2,[5,6]), plot(eta, r, colors{i}, 'LineWidth', 2); hold on;
+end
+
+% Add equal discount rate case (rho_e = rho_h = 6%)
+rho_eq = 0.06;
+q_eq = (1 + phi * a_e) / (1 + phi * rho_eq) * ones(size(eta));
+sigma_q_eq = zeros(size(eta));
+eta_sigma_eta_eq = (1 - eta) * sigma;
+eta_mu_eta_eq = ((1 - eta).^2 ./ eta) .* sigma^2;
+iota_eq = (a_e - rho_eq) / (1 + phi * rho_eq);
+r_eq = rho_eq + a_e - iota_eq - sigma^2 ./ eta;
+
+% Plot equal case with dashed blue line
+subplot(3,2,1), plot(eta, q_eq, 'bREPLACE_WITH_DASH_DASH', 'LineWidth', 2);
+subplot(3,2,2), plot(eta, sigma_q_eq, 'bREPLACE_WITH_DASH_DASH', 'LineWidth', 2);
+subplot(3,2,3), plot(eta, eta_mu_eta_eq, 'bREPLACE_WITH_DASH_DASH', 'LineWidth', 2);
+subplot(3,2,4), plot(eta, eta_sigma_eta_eq, 'bREPLACE_WITH_DASH_DASH', 'LineWidth', 2);
+subplot(3,2,[5,6]), plot(eta, r_eq, 'bREPLACE_WITH_DASH_DASH', 'LineWidth', 2);
+
+% Format plots
+subplot(3,2,1)
+xlabel('\eta'), ylabel('q(\eta)')
+legend('\rho^e > \rho^h (6%/4%)', '\rho^e > \rho^h (5%/2%)', '\rho^e = \rho^h', 'Location', 'northeast')
+grid on, ylim([1.25 2])
+
+subplot(3,2,2)
+xlabel('\eta'), ylabel('\sigma^q(\eta)')
+legend('\rho^e > \rho^h (6%/4%)', '\rho^e > \rho^h (5%/2%)', '\rho^e = \rho^h', 'Location', 'northeast')
+grid on, ylim([-0.04 0.02])
+
+subplot(3,2,3)
+xlabel('\eta'), ylabel('\eta\mu^\eta(\eta)')
+legend('\rho^e > \rho^h (6%/4%)', '\rho^e > \rho^h (5%/2%)', '\rho^e = \rho^h', 'Location', 'northeast')
+grid on, ylim([-0.05 1])
+
+subplot(3,2,4)
+xlabel('\eta'), ylabel('\eta\sigma^\eta(\eta)')
+legend('\rho^e > \rho^h (6%/4%)', '\rho^e > \rho^h (5%/2%)', '\rho^e = \rho^h', 'Location', 'northeast')
+grid on, ylim([0 0.1])
+
+subplot(3,2,[5,6])
+xlabel('\eta'), ylabel('r(\eta)')
+legend('\rho^e > \rho^h (6%/4%)', '\rho^e > \rho^h (5%/2%)', '\rho^e = \rho^h', 'Location', 'northeast')
+grid on, ylim([-1 0.1])
+xlim([0 0.5]) 
+##### SOURCE END #####
+-->
+</body>
+</html>
