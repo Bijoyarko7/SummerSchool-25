@@ -149,7 +149,7 @@ set(gcf, 'PaperPositionMode', 'auto')
 print('Debt_plot', '-dpdf', '-r300')
 
 
-% Create figure with specific size FOR Drift and sigma
+% Create figure with specific size FOR Price and Amplification
 figure('Position', [100, 100, 900, 400]);
 
 % Find transition point where kappa becomes >= 1
@@ -162,21 +162,29 @@ end
 
 % Plot data
 subplot(1,2,1)
-plot(eta, MU, 'b-', 'LineWidth', 2);
+plot(eta, Q, 'b-', 'LineWidth', 2);
 hold on
 % Add vertical dashed line at transition point
 plot([transition_eta transition_eta], ylim, 'k:', 'LineWidth', 1)
 hold off
 
 xlabel('\eta', 'FontSize', 14)
-ylabel('\mu_{\eta}', 'FontSize', 14)
-title('Drift', 'FontSize', 14, 'FontWeight', 'bold')
+ylabel('q', 'FontSize', 14)
+title('Price of Capital', 'FontSize', 14, 'FontWeight', 'bold')
 grid off
 xlim([0 1])
-ylim([-0.01 0.03])
+ylim([0.9 1.4])
+
+% Add region labels
+text(0.15, 1.22, 'Crisis Region', 'FontSize', 8, 'Color', 'red', 'Rotation', 0)
+text(0.7, 1.22, 'Normal Region', 'FontSize', 8, 'Color', 'red', 'Rotation', 0)
+
+% Add kappa labels at top
+text(transition_eta/2, 1.38, '\kappa_t^e < 1', 'FontSize', 10, 'HorizontalAlignment', 'center')
+text((transition_eta+1)/2, 1.38, '\kappa_t^e = 1', 'FontSize', 10, 'HorizontalAlignment', 'center')
 
 subplot(1,2,2)
-plot(eta, S, 'b-', 'LineWidth', 2);
+plot(eta, SSQ-sigma, 'b-', 'LineWidth', 2);
 hold on
 % Add horizontal dashed line at y=0
 plot([0 1], [0 0], 'k--', 'LineWidth', 1)
@@ -185,13 +193,21 @@ plot([transition_eta transition_eta], ylim, 'k:', 'LineWidth', 1)
 hold off
 
 xlabel('\eta', 'FontSize', 14)
-ylabel('\sigma_{\eta}', 'FontSize', 14)
-title('Volatility', 'FontSize', 14, 'FontWeight', 'bold')
+ylabel('\sigma^q', 'FontSize', 14)
+title('Amplification', 'FontSize', 14, 'FontWeight', 'bold')
 grid off
 xlim([0 1])
-ylim([0 0.1])
+ylim([-0.01 0.07])
+
+% Add region labels
+text(0.15, 0.04, 'Crisis Region', 'FontSize', 8, 'Color', 'red', 'Rotation', 0)
+text(0.7, 0.04, 'Normal Region', 'FontSize', 8, 'Color', 'red', 'Rotation', 0)
+
+% Add kappa labels at top
+text(transition_eta/2, 0.065, '\kappa_t^e < 1', 'FontSize', 10, 'HorizontalAlignment', 'center')
+text((transition_eta+1)/2, 0.065, '\kappa_t^e = 1', 'FontSize', 10, 'HorizontalAlignment', 'center')
 
 % Adjust subplot spacing
 set(gcf, 'PaperPositionMode', 'auto')
-print('Drift and Vlatility', '-dpdf', '-r300')
+print('price_amplification_plot', '-dpdf', '-r300')
 
